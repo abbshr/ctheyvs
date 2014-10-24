@@ -1,0 +1,18 @@
+/* ele.me */
+// 获取地点
+http://restapi.amap.com/gss/simple?encode=utf-8&number=20&batch=1&range=3000&resType=json&retvalue=1&sid=1000&rid=497051&keyword=哈尔滨工业大学
+
+// 获取餐馆数量
+http://v5.ele.me/homepage/restaurantCount?posArray%5B%5D=126.633289%2C45.747428&csrf_token=206425b2a7a73c700ac4a7a2bed1ad68b103f0e9
+
+// 进入餐厅界面
+http://v5.ele.me/poi/from?lng=126.633289&lat=45.747428
+
+/* meituan */
+// 进入餐馆界面
+http://waimai.meituan.com/geo/geohash?lat=45.747428&lng=126.633289&addr=哈尔滨工业大学
+
+/* baidu */
+http://waimai.baidu.com/waimai?qt=poisearch&ie=utf-8&sug=0&tn=B_NORMAL_MAP&oue=1&res=1&c=48&wd=哈尔滨工业大学
+
+/waimai?qt=shoplist&lat=5709075.00&lng=14097393.10 &address=哈尔滨工业大学(一校区)&city_id=48
