@@ -7,7 +7,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes');
-var users = require('./routes/user');
 
 var app = express();
 
@@ -28,7 +27,7 @@ app.use(app.router);
 // 根据位置获取店家信息
 app.get('/location', routes.location);
 // 进入店家页面
-app.get('/restaurant', routes.restaurant);
+//app.get('/restaurant', routes.restaurant);
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {

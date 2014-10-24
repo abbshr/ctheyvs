@@ -13,6 +13,8 @@ http://v5.ele.me/poi/from?lng=126.633289&lat=45.747428
 http://waimai.meituan.com/geo/geohash?lat=45.747428&lng=126.633289&addr=哈尔滨工业大学
 
 /* baidu */
+//定位
 http://waimai.baidu.com/waimai?qt=poisearch&ie=utf-8&sug=0&tn=B_NORMAL_MAP&oue=1&res=1&c=48&wd=哈尔滨工业大学
 
+// 进入餐厅界面
 /waimai?qt=shoplist&lat=5709075.00&lng=14097393.10 &address=哈尔滨工业大学(一校区)&city_id=48

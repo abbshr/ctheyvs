@@ -2,61 +2,90 @@
 var request = require('request');
 var ExecQ = require('execq');
 
-var Target = require('./target.js');
-var parse = require('./parser.js');
+var Target = require('./target');
+var parse = require('./parser');
 
-const CONFIG = require('../config.js');
+var proxy = require('./config');
 
 function Tracker(position) {
   this.location = position;
-  this._geo = null;
-  //this.execQ = new ExecQ();
+  // 保存各网站的店家页面url
+  this.urls = [];
 }
 
-Tracker.prototype.getPosition = function (force, callback) {
+/*Tracker.prototype.getPosition = function (force, callback) {
   if (force || !this._geo)
     this.reqPosUpdate(callback);
   else
     return callback(this._geo);
+};*/
+Tracker.prototype.getUrl = function (url, lng, lat, addr) {
+  return url + (url.match(/baidu/) ? addr + '&' : '') + 'lng=' + lng + '&lat=' + lat;
 };
-
-Tracker.prototype.reqPosUpdate = function (callback) {
-  var self = this;
-  var url = CONFIG.geo_baseurl + position;
-  request(url, function (err, res, body) {
-    // 获取第一个命中位置
-    var pos = JSON.parse(body.match(/AMap\.MAjaxResult\[.+\]\s*=\s*(.+)/)[1]).list[0];
-    // 保存经纬度
-    callback(self._geo = {
-      x: pos.x, 
-      y: pos.y
-    });
-  });
-};
-
-// 保存各网站的店家页面url
-Tracker.prototype.urls = CONFIG.urls;
 
 Tracker.prototype.trackRestaurant = function (callback) {
   var self = this;
   var targets = [];
   var execQ = new ExecQ();
 
+  function cb(url, parser, err, res, body) {
+    var addr = self.location;
+    var lng, lat;
+    if (url.match(/(ele)|(meituan)/)) {
+      // 获取第一个命中位置
+      var pos = JSON.parse(body.match(/AMap\.MAjaxResult\[.+\]\s*=\s*(.+)/)[1]).list[0];
+      lng = pos.x;
+      lat = pos.y;
+    } else if (url.match(/baidu/)) {
+      console.log(body);
+      var pos =  JSON.parse(body).result.content[0];
+      lng = pos.longitude; 
+      lat = pos.latitude;
+    }
+    console.log(self.getUrl(url, lng, lat, addr));
+    request({ 
+      url: self.getUrl(url, lng, lat, addr),
+      headers : {
+        'User-Agent': 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.104 Safari/537.36'
+      }
+    }, function (err, res, body) {
+      var target = new Target(body);
+      target.registParser(parser);
+      targets.push(target);
+      // 如果pending队列为空, 执行回调函数
+      // 否则进行下一项抓取
+      //console.log(target);
+      execQ.length ? execQ.goon(execQ.length - 1) : callback(parse(targets));
+    });    
+  }
+
+  proxy.forEach(function (p) {
+    var url = p.geo_baseurl + self.location;
+    execQ.pend([null, request, [url, cb.bind(null, p.res_baseurl, p.parser)]]);
+  });
+
+  execQ.goon(execQ.length - 1);
+};
+
+/*Tracker.prototype.trackRestaurant = function (callback) {
+  var self = this;
+  var targets = [];
+  var execQ = new ExecQ();
+  self.reqPosUpdate(function () {
+    self.urls.forEach(function (url) {
+      execQ.pend([null, request, url, cb.bind(null, url)]);
+    });
+    execQ.goon(execQ.length - 1);
+  });
   function cb(url, err, res, body) {
     var target = new Target(body);
-    target.registParser(CONFIG.parser(url));
+    target.registParser(proxy.parser(url));
     targets.push(target);
     // 如果pending队列为空, 执行回调函数
     // 否则进行下一项抓取
     execQ.length ? execQ.goon(execQ.length - 1) : callback(parse(targets));
   }
-
-  self.urls(self.x, self.y, self.location).forEach(function (url) {
-    execQ.pend([null, request, url, cb.bind(null, url)]);
-  });
-
-  execQ.goon(execQ.length - 1);
-};
+};*/
 
 /*Tracker.prototype.trackFood = function (urls, callback) {
   var self = this;
@@ -65,7 +94,7 @@ Tracker.prototype.trackRestaurant = function (callback) {
 
   function cb(url, err, res, body) {
     var target = new Target(body);
-    target.registParser(CONFIG.parser);
+    target.registParser(proxy.parser);
     targets.push(target);
     execQ.length ? execQ.goon(execQ.length - 1) : callback(parse(targets));
   }
@@ -75,3 +104,5 @@ Tracker.prototype.trackRestaurant = function (callback) {
   });
   execQ.goon(execQ.length - 1)
 };*/
+
+module.exports = Tracker;
