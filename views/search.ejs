@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <form action="/location" method="GET">
+    <input type='text' name='p' placeholder="搜索其他地点">
+    </form>
+    <hr>
+    <% restaurants.forEach(function (p) { %>
+      <h3><%= p[0].proxy %></h3>
+      <% p.forEach(function (n) { %>
+        <ul>
+        <h4><a href="<%= n.href %>"><%= n.name %></a></h4>
+        <img src="<%= n.logo %>">
+        <% Object.keys(n).forEach(function (e) { %>
+          <% if (e.match(/(name)|(logo)|(href)|(proxy)/)) { %>
+            <% return %>
+          <% } else if (e == 'rate') { %>
+            <li>评分: <%= n[e] %></li>
+          <% } else if (e == 'attr') { %>
+            <li>优惠: <%= n[e] %></li>
+          <% } else if (e == 'desc') { %>
+            <li>起送价: <%= n[e] %></li>
+          <% } else if (e == 'ann') { %>
+            <li>公告: <%= n[e] %></li>
+          <% } else if (e == 'peri') { %>
+            <li>时段: <%= n[e] %></li>
+          <% } else if (e == 'saled') { %>
+            <li>已售: <%= n[e] %></li>
+          <% } else if (e == 'addr') { %>
+            <li>地址: <%= n[e]%></li>
+          <% } else if (e == 'intro') { %>
+            <li>介绍: <%= n[e] %></li>
+          <% } else if (e == 'cost') { %>
+            <li>配送价: <%= n[e] %></li>
+          <% } else if (e == 'avatime') { %>
+            <li>平均送餐时间: <%= n[e] %></li>
+          <% } else { %>
+            <li><%= e %>: <%= n[e] %></li>
+          <% } %>
+        <% }) %>
+        </ul>
+      <% }) %>
+    <% }) %>
+  </body>
+</html>

@@ -4,17 +4,8 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-    <% Object.keys(restaurants).forEach(function (name) { %>
-      <h4><%= name %></h4>
-      <% restaurants[name].forEach(function (o) { %>
-        <h5><%= o.proxy %></h5>
-        <ul>
-          <% Object.keys(o).forEach(function (e) { %>
-            <li><%= o.e %></li>
-          <% }) %>
-        </ul>
-      <% }) %>
-      <hr/>
-    <% }) %>
+  <form action="/location" method="GET">
+    <input type='text' name='p' placeholder="输入位置">
+    </form>
   </body>
-</html>
+  </html>

@@ -2,24 +2,29 @@
 var dataCenter = require('../model');
 var Tracker = require('./tracker');
 
-/* GET home page. */
+exports.index = function (req, res, next) {
+  res.render('index');
+};
+
 /* url: /location?p= */
 exports.location = function (req, res, next) {
   // 获取查询地点
   var location = req.query.p;
+  console.log(location);
   dataCenter.queryLocation(location, function (err, restaurants) {
     if (!restaurants) { 
       // 没有记录, 临时抓取
       var tracker = new Tracker(location);
       tracker.trackRestaurant(function (result) {
         // result是二维数组
-        res.end(JSON.stringify(result));
+        //res.end(JSON.stringify(result));
         // 先渲染给前台
-        /*res.render('index', {
+        res.render('search', {
           restaurants: result
         });
+        //console.log(result[0][0].attr);
         // 餐馆信息存入数据库
-        dataCenter.storeLocation(location, result, function () {
+        /*dataCenter.storeLocation(location, result, function () {
           console.log('新地点已添加, 周边餐馆信息解析完毕.');
         });*/
         // 食物信息存入数据库
@@ -27,7 +32,7 @@ exports.location = function (req, res, next) {
       });
     } else {
       // 直接渲染
-      res.render('index', {
+      res.render('search', {
         restaurants: restaurants
       });
     }

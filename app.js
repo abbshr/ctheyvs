@@ -24,6 +24,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(app.router);
 
+app.get('/', routes.index);
 // 根据位置获取店家信息
 app.get('/location', routes.location);
 // 进入店家页面
@@ -52,10 +53,11 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-    res.render('error', {
+    /*res.render('error', {
         message: err.message,
         error: {}
-    });
+    });*/
+    console.log(err);
 });
 
 

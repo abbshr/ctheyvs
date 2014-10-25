@@ -29,8 +29,15 @@ function parser_eleme($) {
     var resta_total = $('.ratings > .rating-number', e).text();
     resta_info.push({
       href: resta_href,
-      total: resta_total
+      saled: resta_total
     });
+  });
+
+  $('body > div.full-content-wrapper > div.container > div.row.promoted-restaurants.restaurants-row > div > div > div:nth-child(2) > table > tbody > tr > td > .restaurant-block > .line-one')
+  .each(function (i ,e) {
+    // logo
+    resta_info[i].logo = $('.logo-wrapper > .logo > a > img', e)[0].attribs.src;
+    resta_info[i].rate = $('.info > .ratings > div', e)[0] ? $('.info > .ratings > div', e)[0].attribs.title : '';
   });
 
   $('body > div.full-content-wrapper > div.container > div.row.promoted-restaurants.restaurants-row > div > div > div:nth-child(2) > table .restaurant-more-info')
@@ -48,7 +55,7 @@ function parser_eleme($) {
     // 营业时间
     var resta_peri = othersElem[3].next.data;
     // 简介
-    var resta_intro = othersElem[4].next.data;
+    var resta_intro = othersElem[4] && othersElem[4].next.data;
     // 优惠种类
     var iconElem = $('.restaurant-icons', e);
     var resta_attr = [];
@@ -93,7 +100,7 @@ function parser_meituan($) {
       total: resta_total,
       attr: resta_attr,
       sendprice: resta_sendprice,
-      proxy: 'meituan'
+      proxy: '美团外卖'
     });
   });
 
@@ -107,26 +114,33 @@ function parser_baidu($) {
     return {
       name: e.shop_name,
       href: 'http://waimai.baidu.com/waimai/shop/' + e.shop_id,
-      proxy: 'baidu',
+      proxy: '百度外卖',
       ann: e.shop_announcement,
-      logo: e.logo_url,
-      takeout_price: e.takeout_price,
-      takeout_cost: e.takeout_cost,
-      delivery_time: e.delivery_time,
-      start_time: e.start_time,
-      end_time: e.end_time,
+      logo: 'http://webmap2.map.bdimg.com/maps/services/thumbnails?width=228&height=140&align=center,center&quality=100&src=' + e.logo_url,
+      // 起送价
+      desc: e.takeout_price,
+      // 配送费
+      cost: e.takeout_cost,
+      // 平均送餐时间
+      avatime: e.delivery_time,
+      peri: (e.start_time || '') + '~' + e.end_time,
       //delivery_regions: e.delivery_regions,
-      distance: e.distance,
-      is_online: e.is_online,
-      bussiness_status: e.bussiness_status,
+      //distance: e.distance,
+      //is_online: e.is_online,
+      //bussiness_status: e.bussiness_status,
+      // 已售
       saled: e.saled,
-      discount_info: e.discount_info,
-      invoice_info: e.invoice_info,
-      coupon_info: e.coupon_info,
-      average_score: e.average_score,
-      comment_num: e.comment_num,
-      welfare_info: e.welfare_info,
-      brand: e.brand
+      //discount_info: e.discount_info,
+      //invoice_info: e.invoice_info,
+      //coupon_info: e.coupon_info,
+      // 评分
+      rate: e.average_score,
+      attr: e.welfare_info.reduce(function (a, b) { 
+        return b ? a + b.type_desc + '\n' : ''; 
+      }, '')
+      //comment_num: e.comment_num,
+      //welfare_info: e.welfare_info,
+      //brand: e.brand
     };
   });
 }

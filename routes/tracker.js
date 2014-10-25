@@ -37,12 +37,11 @@ Tracker.prototype.trackRestaurant = function (callback) {
       lng = pos.x;
       lat = pos.y;
     } else if (url.match(/baidu/)) {
-      console.log(body);
       var pos =  JSON.parse(body).result.content[0];
       lng = pos.longitude; 
       lat = pos.latitude;
     }
-    console.log(self.getUrl(url, lng, lat, addr));
+    console.log(self.getUrl(url, lng, lat, addr))
     request({ 
       url: self.getUrl(url, lng, lat, addr),
       headers : {

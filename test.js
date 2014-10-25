@@ -15,6 +15,7 @@ request({
 }, function (err, res, body) {
   var $ = cheerio.load(body);
   console.log(parser_eleme($));
+  //parser_eleme($)
 }); 
 
 function parser_eleme($) {
@@ -30,6 +31,14 @@ function parser_eleme($) {
       href: resta_href,
       total: resta_total
     });
+  });
+
+  $('body > div.full-content-wrapper > div.container > div.row.promoted-restaurants.restaurants-row > div > div > div:nth-child(2) > table > tbody > tr > td > .restaurant-block > .line-one')
+  .each(function (i ,e) {
+    // logo
+    resta_info[i].logo = $('.logo-wrapper > .logo > a > img', e)[0].attribs.src;
+    resta_info[i].rate = $('.info > .ratings > div', e)[0] ? $('.info > .ratings > div', e)[0].attribs.title : '';
+    resta_info[i].saled = $('.info > .ratings > span', e)[0] ? $('.info > .ratings > span', e)[0].children[0].data : '';
   });
 
   $('body > div.full-content-wrapper > div.container > div.row.promoted-restaurants.restaurants-row > div > div > div:nth-child(2) > table .restaurant-more-info')
