@@ -10,7 +10,6 @@ exports.index = function (req, res, next) {
 exports.location = function (req, res, next) {
   // 获取查询地点
   var location = req.query.p;
-  console.log(location);
   dataCenter.queryLocation(location, function (err, restaurants) {
     if (!restaurants) { 
       // 没有记录, 临时抓取
@@ -22,7 +21,7 @@ exports.location = function (req, res, next) {
         res.render('search', {
           restaurants: result
         });
-        //console.log(result[0][0].attr);
+        //console.log(result[0]);
         // 餐馆信息存入数据库
         /*dataCenter.storeLocation(location, result, function () {
           console.log('新地点已添加, 周边餐馆信息解析完毕.');

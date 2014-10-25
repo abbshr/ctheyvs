@@ -11,12 +11,11 @@ module.exports = [
   }
 ];
 
-var tmp = require;
 var data;
-var require = function () { return require };
-require.init = function () {arguments[0] && (data = arguments[0])};
-require.initSwitchaddr = function () {};
-require.async = function () {};
+var tmp = function () { return tmp };
+tmp.init = function () {arguments[0] && (data = arguments[0])};
+tmp.initSwitchaddr = function () {};
+tmp.async = function () {};
 
 function parser_eleme($) {
   var resta_info = [];
@@ -68,7 +67,7 @@ function parser_eleme($) {
     resta_info[i].peri = resta_peri;
     resta_info[i].intro = resta_intro;
     resta_info[i].attr = resta_attr;
-    resta_info[i].proxy = 'eleme';
+    resta_info[i].proxy = '饿了么';
   });
 
   return resta_info;
@@ -108,8 +107,7 @@ function parser_meituan($) {
 }
 
 function parser_baidu($) {
-  eval($('script')[11].children[0].data);
-  require = tmp;
+  eval($('script')[11].children[0].data.replace(/require/g, 'tmp'));
   return data.map(function (e) {
     return {
       name: e.shop_name,

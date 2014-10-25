@@ -41,7 +41,6 @@ Tracker.prototype.trackRestaurant = function (callback) {
       lng = pos.longitude; 
       lat = pos.latitude;
     }
-    console.log(self.getUrl(url, lng, lat, addr))
     request({ 
       url: self.getUrl(url, lng, lat, addr),
       headers : {
@@ -53,7 +52,7 @@ Tracker.prototype.trackRestaurant = function (callback) {
       targets.push(target);
       // 如果pending队列为空, 执行回调函数
       // 否则进行下一项抓取
-      //console.log(target);
+      //console.log(res.path);
       execQ.length ? execQ.goon(execQ.length - 1) : callback(parse(targets));
     });    
   }
