@@ -9,6 +9,11 @@ module.exports = [
     res_baseurl: "http://waimai.baidu.com/waimai?qt=shoplist&address=",
     parser: parser_baidu
   }
+  /*{
+    geo_baseurl: 'http://restapi.amap.com/gss/simple?encode=utf-8&number=1&batch=1&range=1000&resType=json&retvalue=1&sid=1000&rid=497051&keyword=',
+    res_baseurl: "http://waimai.meituan.com/geo/geohash?addr=",
+    parser: parser_meituan
+  }*/
 ];
 
 var data;

@@ -10,6 +10,7 @@ exports.index = function (req, res, next) {
 exports.location = function (req, res, next) {
   // 获取查询地点
   var location = req.query.p;
+  //console.log(location)
   dataCenter.queryLocation(location, function (err, restaurants) {
     if (!restaurants) { 
       // 没有记录, 临时抓取
@@ -18,6 +19,7 @@ exports.location = function (req, res, next) {
         // result是二维数组
         //res.end(JSON.stringify(result));
         // 先渲染给前台
+        //console.log(result);
         res.render('search', {
           restaurants: result
         });

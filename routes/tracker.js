@@ -1,5 +1,5 @@
 
-var request = require('request');
+var request = require('./request');
 var ExecQ = require('execq');
 
 var Target = require('./target');
@@ -28,7 +28,7 @@ Tracker.prototype.trackRestaurant = function (callback) {
   var targets = [];
   var execQ = new ExecQ();
 
-  function cb(url, parser, err, res, body) {
+  function cb(url, parser, res, body) {
     var addr = self.location;
     var lng, lat;
     if (url.match(/(ele)|(meituan)/)) {
@@ -41,18 +41,12 @@ Tracker.prototype.trackRestaurant = function (callback) {
       lng = pos.longitude; 
       lat = pos.latitude;
     }
-    request({ 
-      url: self.getUrl(url, lng, lat, addr),
-      headers : {
-        'User-Agent': 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.104 Safari/537.36'
-      }
-    }, function (err, res, body) {
+    request(self.getUrl(url, lng, lat, addr), function (res, body) {
       var target = new Target(body);
       target.registParser(parser);
       targets.push(target);
       // 如果pending队列为空, 执行回调函数
       // 否则进行下一项抓取
-      //console.log(res.path);
       execQ.length ? execQ.goon(execQ.length - 1) : callback(parse(targets));
     });    
   }
