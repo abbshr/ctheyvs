@@ -20,7 +20,7 @@ function Tracker(position) {
     return callback(this._geo);
 };*/
 Tracker.prototype.getUrl = function (url, lng, lat, addr) {
-  return url + (url.match(/baidu/) ? addr + '&' : '') + 'lng=' + lng + '&lat=' + lat;
+  return url + (url.match(/(baidu)|(meituan)/) ? addr + '&' : '') + 'lng=' + lng + '&lat=' + lat;
 };
 
 Tracker.prototype.trackRestaurant = function (callback) {
@@ -41,12 +41,14 @@ Tracker.prototype.trackRestaurant = function (callback) {
       lng = pos.longitude; 
       lat = pos.latitude;
     }
+    //console.log(self.getUrl(url, lng, lat, addr))
     request(self.getUrl(url, lng, lat, addr), function (res, body) {
       var target = new Target(body);
       target.registParser(parser);
       targets.push(target);
       // 如果pending队列为空, 执行回调函数
       // 否则进行下一项抓取
+      //console.log(target);
       execQ.length ? execQ.goon(execQ.length - 1) : callback(parse(targets));
     });    
   }

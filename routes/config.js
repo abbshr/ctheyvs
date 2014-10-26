@@ -8,12 +8,12 @@ module.exports = [
     geo_baseurl: 'http://waimai.baidu.com/waimai?qt=poisearch&ie=utf-8&sug=0&tn=B_NORMAL_MAP&oue=1&res=1&wd=',
     res_baseurl: "http://waimai.baidu.com/waimai?qt=shoplist&address=",
     parser: parser_baidu
-  }
-  /*{
+  },
+  {
     geo_baseurl: 'http://restapi.amap.com/gss/simple?encode=utf-8&number=1&batch=1&range=1000&resType=json&retvalue=1&sid=1000&rid=497051&keyword=',
     res_baseurl: "http://waimai.meituan.com/geo/geohash?addr=",
     parser: parser_meituan
-  }*/
+  }
 ];
 
 var data;
@@ -81,29 +81,35 @@ function parser_eleme($) {
 function parser_meituan($) {
   var resta_info = [];
 
-  $('.rest-list.online-rests > .list.clearfix > ul > li.fl')
+  $('.rest-list > .list.clearfix > ul > li.fl')
   .each(function (i, e) {
     var liElem = e.children[1];
     var aElem = liElem.children[1];
-    var resta_name = liElem.attribs['data-title'];
-    var resta_ann = liElem.attribs['data-bulletin'];
-    var resta_href = aElem.attribs.href;
+    var resta_name = $('div',e)[0].attribs['data-title'];
+    var resta_ann = $('div',e)[0].attribs['data-bulletin'];
+    var resta_href = $('div > a',e)[0].attribs.href;
+    var resta_logo = $('div > a > .top-content > .preview.fl > img', e)[0].attribs['data-src'];
     var resta_desc = $('.content > .price > .start-price', aElem).text();
     var resta_sendprice = $('.content > .price > .send-price', aElem).text();
-    var resta_total = $('.content > .rank.clearfix > .total', aElem).text();
+    var totalElem = $('.content > .rank.clearfix > .total', aElem);
+    var resta_total = totalElem ? totalElem.text() : '';
     var attrElem = $('.others script', aElem);
+    var avatimeElem = $('div > a > .others > span', e)[0];
+    var resta_avatime = avatimeElem ? avatimeElem.children[0].data : '';
     var resta_attr = [];
-    for (var j = 0; j < 4; j++)
+    for (var j = 0; j < attrElem.length; j++)
       attrElem[j] && resta_attr.push(attrElem[j].children[0].data);
     
     resta_info.push({
-      href: resta_href,
+      href: 'http://waimai.meituan.com' + resta_href,
       name: resta_name,
+      logo: resta_logo,
+      avatime: resta_avatime,
       ann: resta_ann,
       desc: resta_desc,
-      total: resta_total,
+      saled: resta_total,
       attr: resta_attr,
-      sendprice: resta_sendprice,
+      cost: resta_sendprice,
       proxy: '美团外卖'
     });
   });

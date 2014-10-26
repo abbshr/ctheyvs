@@ -21,6 +21,7 @@ exports.location = function (req, res, next) {
         // 先渲染给前台
         //console.log(result);
         res.render('search', {
+          title: location,
           restaurants: result
         });
         //console.log(result[0]);
