@@ -46,7 +46,7 @@ Tracker.prototype.trackRestaurant = function (callback) {
       targets.push(target);
       // 如果pending队列为空, 执行回调函数
       // 否则进行下一项抓取
-      console.log(target);
+      //console.log(target);
       execQ.length ? execQ.goon(execQ.length - 1) : callback(parse(targets));
     });    
   }
@@ -57,6 +57,40 @@ Tracker.prototype.trackRestaurant = function (callback) {
   });
 
   execQ.goon(execQ.length - 1);
+};
+
+Tracker.prototype.normalize = function (restaurants, callback) {
+  var result = restaurants.map(function (proxy) {
+    return proxy.map(function (restaurant) {
+      return restaurant.name;
+    });
+  }).reduce(function (a, p, i, map) {
+    var o = {};
+    p.forEach(function (n, j) {
+      o[n] = [ [i, j] ];
+      for (var l, m = i + 1; m < map.length; m++)
+        if ((l = map[m].indexOf(n)) != -1)
+          o[n].push([m, l]);
+    });
+
+    var keys = Object.keys(a);
+    keys.length && keys.forEach(function (k) {
+      if (o[k])
+        o[k] = a[k].length > o[k].length ? a[k] : o[k];
+      else
+        o[k] = a[k];
+    });
+
+    return o;
+  }, {});
+
+  for (var i in result)
+    result[i] = result[i].reduce(function (arr, b) {
+      arr.push(restaurants[b[0]][b[1]]);
+      return arr;
+    }, []);
+
+  return callback(result);
 };
 
 /*Tracker.prototype.trackRestaurant = function (callback) {

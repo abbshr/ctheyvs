@@ -10,82 +10,34 @@ exports.index = function (req, res, next) {
 exports.location = function (req, res, next) {
   // 获取查询地点
   var location = req.query.p;
-  //console.log(location)
+  console.log('query:', location);
   dataCenter.queryLocation(location, function (err, restaurants) {
     if (!restaurants) { 
       // 没有记录, 临时抓取
       var tracker = new Tracker(location);
       tracker.trackRestaurant(function (result) {
         // result是二维数组
-        //res.end();
-        // 先渲染给前台
-        /*console.log(result.map(function (proxy) {
-          return proxy.map(function (restaurant) {
-            return restaurant.name;
-          });
-        }).reduce(function (a, p, i, map) {
-          var o = {};
-          p.forEach(function (n, j) {
-            o[n] = [ [i, j] ];
-            for (var l, m = i + 1; m < map.length; m++)
-              if ((l = map[m].indexOf(n)) != -1)
-                o[n].push([m, l]);
+        tracker.normalize(result, function (result) {
+          // 先渲染给前台
+          res.render('search', {
+            title: location,
+            restaurants: result
           });
 
-          var keys = Object.keys(a);
-          keys.length && keys.forEach(function (k) {
-            if (o[k])
-              o[k] = a[k].length > o[k].length ? a[k] : o[k];
-            else
-              o[k] = a[k];
+          // 餐馆信息存入数据库
+          dataCenter.storeLocation(location, result, function () {
+            console.log('新地点已添加, 周边餐馆信息解析完毕.');
           });
-
-          return o;
-        }, {}));*/
-
-        res.render('search', {
-          title: location,
-          restaurants: result
         });
-        require('fs').writeFileSync('./docs/input', JSON.stringify(result.map(function (proxy) {
-          return proxy.map(function (restaurant) {
-            return restaurant.name;
-          });
-        })));
-        require('fs').writeFileSync('./docs/output', JSON.stringify(result.map(function (proxy) {
-          return proxy.map(function (restaurant) {
-            return restaurant.name;
-          });
-        }).reduce(function (a, p, i, map) {
-          var o = {};
-          p.forEach(function (n, j) {
-            o[n] = [ [i, j] ];
-            for (var l, m = i + 1; m < map.length; m++)
-              if ((l = map[m].indexOf(n)) != -1)
-                o[n].push([m, l]);
-          });
-
-          var keys = Object.keys(a);
-          keys.length && keys.forEach(function (k) {
-            if (o[k])
-              o[k] = a[k].length > o[k].length ? a[k] : o[k];
-            else
-              o[k] = a[k];
-          });
-
-          return o;
-        }, {})));
-        //console.log(result[0]);
-        // 餐馆信息存入数据库
-        /*dataCenter.storeLocation(location, result, function () {
-          console.log('新地点已添加, 周边餐馆信息解析完毕.');
-        });*/
+        //console.log(result);
         // 食物信息存入数据库
         //dataCenter.storeRestaurant(result,function ());
       });
     } else {
+      //console.log(restaurants);
       // 直接渲染
       res.render('search', {
+        title: location,
         restaurants: restaurants
       });
     }
