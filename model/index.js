@@ -8,12 +8,18 @@ var db_loc = level('location');
 
 // 根据地点获取餐馆信息
 exports.queryLocation = function (location, callback) {
-  db_loc.get(location, function (err, results) {
-    if (err.notFound) {  
-      callback(err, null);
-    } else {
-      callback(null, results);
-    }
+  var list = [];
+
+  db_loc.createReadStream({
+    start: location,
+    end: location + '~'
+  }).on('data', function (d) {
+    list.push(JSON.parse(d.value));
+  }).on('end', function () {
+    callback(null, list.length && list);
+  }).on('error', function (e) {
+    console.log(e);
+    callback(e, null);
   });
 };
 
@@ -30,41 +36,13 @@ exports.queryLocation = function (location, callback) {
 
 exports.storeLocation = function (location, restaurants, callback) {
   callback || (callback = function () {});
-  
-  var result = restaurants.map(function (proxy) {
-    return proxy.map(function (restaurant) {
-      return restaurant.name;
-    });
-  }).reduce(function (a, p, i, map) {
-    var o = {};
-    p.forEach(function (n, j) {
-      o[n] = [ [i, j] ];
-      for (var l, m = i + 1; m < map.length; m++)
-        if ((l = map[m].indexOf(n)) != -1)
-          o[n].push([m, l]);
-    });
 
-    var keys = Object.keys(a);
-    keys.length && keys.forEach(function (k) {
-      if (o[k])
-        o[k] = a[k].length > o[k].length ? a[k] : o[k];
-      else
-        o[k] = a[k];
-    });
-
-    return o;
-  }, {});
-
-  for (var i in result) {
-    result[i] = result[i].reduce(function (arr, b) {
-      arr.push(restaurants[b[0]][b[1]]);
-      return arr;
-    }, []);
-  }
-
-  db_loc.createWriteStream().on('close', function () {
+  var ws = db_loc.createWriteStream().on('end', function () {
     callback();
-  }).write({ key: location, value:result , valueEncoding: 'json' });
+  });
+
+  for (var i in restaurants)
+    ws.write({ key: location + '-' + i, value: restaurants[i] , valueEncoding: 'json' });
 };
 
 /*exports.storeRestaurant = function (restaurant, foods, callback) {
