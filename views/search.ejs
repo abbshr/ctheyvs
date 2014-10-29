@@ -11,11 +11,11 @@
     </form>
     <hr>
     <% restaurants.forEach(function (p) { %>
-      <h3><%= p[0].proxy %></h3>
+      <h3><%= p[0].name %></h3>
       <% p.forEach(function (n) { %>
-        <ul>
-        <h4><a href="<%= n.href %>"><%= n.name %></a></h4>
+        <h4><a href="<%= n.href %>"><%= n.proxy %></a></h4>
         <img src="<%= n.logo %>">
+        <ul>
         <% Object.keys(n).forEach(function (e) { %>
           <% if (e.match(/(name)|(logo)|(href)|(proxy)/)) { %>
             <% return %>
@@ -45,6 +45,7 @@
         <% }) %>
         </ul>
       <% }) %>
+      <hr/>
     <% }) %>
   </body>
 </html>
