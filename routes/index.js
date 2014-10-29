@@ -10,7 +10,7 @@ exports.index = function (req, res, next) {
 exports.location = function (req, res, next) {
   // 获取查询地点
   var location = req.query.p;
-  console.log('query:', location);
+  console.log('查询地点:', location);
   dataCenter.queryLocation(location, function (err, restaurants) {
     if (!restaurants) { 
       // 没有记录, 临时抓取
@@ -26,7 +26,7 @@ exports.location = function (req, res, next) {
 
           // 餐馆信息存入数据库
           dataCenter.storeLocation(location, result, function () {
-            console.log('新地点已添加, 周边餐馆信息解析完毕.');
+            console.log('周边餐馆信息解析完毕, 新地点已添加.');
           });
         });
         //console.log(result);

@@ -37,12 +37,13 @@ exports.queryLocation = function (location, callback) {
 exports.storeLocation = function (location, restaurants, callback) {
   callback || (callback = function () {});
 
-  var ws = db_loc.createWriteStream().on('end', function () {
+  var ws = db_loc.createWriteStream().on('close', function () {
     callback();
   });
-
+  
   for (var i in restaurants)
     ws.write({ key: location + '-' + i, value: restaurants[i] , valueEncoding: 'json' });
+  ws.end();
 };
 
 /*exports.storeRestaurant = function (restaurant, foods, callback) {
