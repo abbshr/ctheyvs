@@ -1,9 +1,12 @@
 
 // 数据抽象模型
+var net = require('net');
+var multilevel = require('multilevel');
 
-var level = require('level');
+var con = net.connect(8888);
 // 两个存储仓库
-var db_loc = level('location');
+var db_loc = multilevel.client();//level('location');
+con.pipe(db_loc.createRpcStream()).pipe(con);
 //var db_res = level('restaurant');
 
 // 根据地点获取餐馆信息

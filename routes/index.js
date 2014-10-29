@@ -23,9 +23,8 @@ exports.location = function (req, res, next) {
             title: location,
             restaurants: result
           });
-
           // 餐馆信息存入数据库
-          dataCenter.storeLocation(location, result, function () {
+          dataCenter.storeLocation(location, result, function () { 
             console.log('周边餐馆信息解析完毕, 新地点已添加.');
           });
         });
