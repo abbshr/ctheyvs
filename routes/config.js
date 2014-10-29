@@ -10,17 +10,11 @@ module.exports = [
     parser: parser_baidu
   },
   {
-    geo_baseurl: 'http://restapi.amap.com/gss/simple?encode=utf-8&number=1&batch=1&range=1000&resType=json&retvalue=1&sid=1000&rid=497051&keyword=',
+    geo_baseurl: 'http://api.map.baidu.com/geocoder/v2/?output=json&ak=HxElSG6mnrSGjLtLqlxECNGV&address=',
     res_baseurl: "http://waimai.meituan.com/geo/geohash?addr=",
     parser: parser_meituan
   }
 ];
-
-var data;
-var tmp = function () { return tmp };
-tmp.init = function () {arguments[0] && (data = arguments[0])};
-tmp.initSwitchaddr = function () {};
-tmp.async = function () {};
 
 function parser_eleme($) {
   var resta_info = [];
@@ -118,7 +112,14 @@ function parser_meituan($) {
 }
 
 function parser_baidu($) {
-  eval($('script')[11].children[0].data.replace(/require/g, 'tmp'));
+  var data;
+  var require = function () { return require };
+  require.init = function () {arguments[0] && (data = arguments[0])};
+  require.initSwitchaddr = function () {};
+  require.async = function () {};
+  //console.log($('script')[11])
+  //eval($('script')[11].children[0].data.replace(/require/g, 'tmp'));
+  eval($('script')[11].children[0].data);
   return data.map(function (e) {
     return {
       name: e.shop_name,

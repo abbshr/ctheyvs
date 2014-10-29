@@ -17,13 +17,64 @@ exports.location = function (req, res, next) {
       var tracker = new Tracker(location);
       tracker.trackRestaurant(function (result) {
         // result是二维数组
-        //res.end(JSON.stringify(result));
+        //res.end();
         // 先渲染给前台
-        //console.log(result);
+        /*console.log(result.map(function (proxy) {
+          return proxy.map(function (restaurant) {
+            return restaurant.name;
+          });
+        }).reduce(function (a, p, i, map) {
+          var o = {};
+          p.forEach(function (n, j) {
+            o[n] = [ [i, j] ];
+            for (var l, m = i + 1; m < map.length; m++)
+              if ((l = map[m].indexOf(n)) != -1)
+                o[n].push([m, l]);
+          });
+
+          var keys = Object.keys(a);
+          keys.length && keys.forEach(function (k) {
+            if (o[k])
+              o[k] = a[k].length > o[k].length ? a[k] : o[k];
+            else
+              o[k] = a[k];
+          });
+
+          return o;
+        }, {}));*/
+
         res.render('search', {
           title: location,
           restaurants: result
         });
+        require('fs').writeFileSync('./docs/input', JSON.stringify(result.map(function (proxy) {
+          return proxy.map(function (restaurant) {
+            return restaurant.name;
+          });
+        })));
+        require('fs').writeFileSync('./docs/output', JSON.stringify(result.map(function (proxy) {
+          return proxy.map(function (restaurant) {
+            return restaurant.name;
+          });
+        }).reduce(function (a, p, i, map) {
+          var o = {};
+          p.forEach(function (n, j) {
+            o[n] = [ [i, j] ];
+            for (var l, m = i + 1; m < map.length; m++)
+              if ((l = map[m].indexOf(n)) != -1)
+                o[n].push([m, l]);
+          });
+
+          var keys = Object.keys(a);
+          keys.length && keys.forEach(function (k) {
+            if (o[k])
+              o[k] = a[k].length > o[k].length ? a[k] : o[k];
+            else
+              o[k] = a[k];
+          });
+
+          return o;
+        }, {})));
         //console.log(result[0]);
         // 餐馆信息存入数据库
         /*dataCenter.storeLocation(location, result, function () {

@@ -13,12 +13,6 @@ function Tracker(position) {
   this.urls = [];
 }
 
-/*Tracker.prototype.getPosition = function (force, callback) {
-  if (force || !this._geo)
-    this.reqPosUpdate(callback);
-  else
-    return callback(this._geo);
-};*/
 Tracker.prototype.getUrl = function (url, lng, lat, addr) {
   return url + (url.match(/(baidu)|(meituan)/) ? addr + '&' : '') + 'lng=' + lng + '&lat=' + lat;
 };
@@ -31,7 +25,7 @@ Tracker.prototype.trackRestaurant = function (callback) {
   function cb(url, parser, res, body) {
     var addr = self.location;
     var lng, lat;
-    if (url.match(/(ele)|(meituan)/)) {
+    if (url.match(/ele/)) {
       // 获取第一个命中位置
       var pos = JSON.parse(body.match(/AMap\.MAjaxResult\[.+\]\s*=\s*(.+)/)[1]).list[0];
       lng = pos.x;
@@ -40,6 +34,10 @@ Tracker.prototype.trackRestaurant = function (callback) {
       var pos =  JSON.parse(body).result.content[0];
       lng = pos.longitude; 
       lat = pos.latitude;
+    } else if (url.match(/meituan/)) {
+      var pos = JSON.parse(body).result.location;
+      lng = pos.lng;
+      lat = pos.lat;
     }
     //console.log(self.getUrl(url, lng, lat, addr))
     request(self.getUrl(url, lng, lat, addr), function (res, body) {
@@ -48,7 +46,7 @@ Tracker.prototype.trackRestaurant = function (callback) {
       targets.push(target);
       // 如果pending队列为空, 执行回调函数
       // 否则进行下一项抓取
-      //console.log(target);
+      console.log(target);
       execQ.length ? execQ.goon(execQ.length - 1) : callback(parse(targets));
     });    
   }
