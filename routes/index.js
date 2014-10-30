@@ -1,6 +1,6 @@
 
 var dataCenter = require('../model');
-var Tracker = require('./tracker');
+var Tracker = require('../lib/tracker');
 
 exports.index = function (req, res, next) {
   res.render('index');
@@ -12,7 +12,7 @@ exports.location = function (req, res, next) {
   var location = req.query.p;
   console.log('查询地点:', location);
   dataCenter.queryLocation(location, function (err, restaurants) {
-    if (!restaurants) { 
+    if (!restaurants) {
       // 没有记录, 临时抓取
       var tracker = new Tracker(location);
       tracker.trackRestaurant(function (result) {
@@ -24,7 +24,7 @@ exports.location = function (req, res, next) {
             restaurants: result
           });
           // 餐馆信息存入数据库
-          dataCenter.storeLocation(location, result, function () { 
+          dataCenter.storeLocation(location, result, function () {
             console.log('周边餐馆信息解析完毕, 新地点已添加.');
           });
         });
