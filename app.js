@@ -23,6 +23,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(app.router);
 
+// 搜索页面
 app.get('/', routes.index);
 // 根据位置获取店家信息
 app.get('/location', routes.location);

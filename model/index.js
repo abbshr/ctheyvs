@@ -26,6 +26,25 @@ exports.queryLocation = function (location, callback) {
   });
 };
 
+// 遍历所有地点
+exports.iterAllLocations = function (callback) {
+  var list = [];
+
+  db_loc.createKeyStream()
+  .on('data', function (k) {
+    k = k.split('-')[0];
+    if (list.indexOf(k) == -1)
+      list.push(k);
+  })
+  .on('end', function () {
+    callback(null, list);
+  })
+  .on('error', function (e) {
+    console.log(e);
+    callback(e, null);
+  });
+};
+
 // 根据地点和餐厅名获取指定餐厅的食物种类
 /*exports.queryRestaurant = function (restaurant, callback) {
   db_res.get(restaurant, function (err, results) {
