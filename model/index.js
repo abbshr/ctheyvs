@@ -29,7 +29,7 @@ exports.queryLocation = function (location, callback) {
 // 根据地点和餐厅名获取指定餐厅的食物种类
 /*exports.queryRestaurant = function (restaurant, callback) {
   db_res.get(restaurant, function (err, results) {
-    if (err.notFound) {  
+    if (err.notFound) {
       callback(err, null);
     } else {
       callback(null, results);
@@ -43,9 +43,14 @@ exports.storeLocation = function (location, restaurants, callback) {
   var ws = db_loc.createWriteStream().on('close', function () {
     callback();
   });
-  
+
   for (var i in restaurants)
-    ws.write({ key: location + '-' + i, value: restaurants[i] , valueEncoding: 'json' });
+    ws.write({
+      key: location + '-' + i,
+      value: restaurants[i] ,
+      valueEncoding: 'json'
+    });
+
   ws.end();
 };
 

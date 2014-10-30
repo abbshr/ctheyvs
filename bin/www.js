@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 var cluster = require('cluster');
 var os = require('os');
 var net = require('net');
@@ -7,10 +8,9 @@ if (cluster.isMaster) {
   var multilevel = require('multilevel');
   var level = require('level');
   var db_loc = level('../location');
-  var wrap_loc = multilevel.server(db_loc);
 
   net.createServer(function (socket) {
-    socket.pipe(wrap_loc).pipe(socket);
+    socket.pipe(multilevel.server(db_loc)).pipe(socket);
   }).listen('8888');
 
   cluster

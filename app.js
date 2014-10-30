@@ -1,5 +1,4 @@
 var express = require('express');
-var http = require('http');
 var path = require('path');
 var favicon = require('static-favicon');
 var logger = require('morgan');
@@ -42,12 +41,12 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
+  app.use(function(err, req, res, next) {
+    res.render('error', {
+      message: err.message,
+      error: err
     });
+  });
 }
 
 // production error handler
